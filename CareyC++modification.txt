@@ -1,0 +1,255 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+//==================================================================== HOTEL CLASS ========================================================================
+
+class Hotel
+
+{
+private:
+    int room;
+    int capacity;
+    double rate;
+    int status;
+public:
+    Hotel();
+    Hotel(int rm, int cap, double rt);
+    int getNumber();
+    int getCapacity();
+    int getStatus();
+    double getRate();
+    int ChangeStatus(int guests);
+    double ChangeRate(double new_rate);
+
+};
+
+
+Hotel::Hotel(int rm, int cap, double rt)
+{
+    room = rm;
+    capacity = cap;
+    rate = rt;
+    status = 0;
+}
+int Hotel::getNumber()
+{
+    return room;
+}
+int Hotel::getCapacity()
+{
+    return capacity;
+}
+
+double Hotel::getRate()
+{
+    return rate;
+}
+int Hotel::getStatus()
+{
+    return status;
+}
+
+int Hotel::ChangeStatus(int guests)
+{
+    if (guests <= capacity)
+        status = guests;
+    else if (guests > capacity)
+        return -1;
+}
+
+double Hotel::ChangeRate(double new_rate)
+{
+    rate = new_rate;
+}
+
+
+//======================================================================    FUNCTIONS   ===========================================================================
+
+
+/*++++++++++++++++++++++++++++++++
+Function Name : Menu()
+Purpose : Display the menu
+++++++++++++++++++++++++++++++*/
+void menu() {
+
+    cout << "\n\n\t\t\tMENU\t\t\t\n\n";
+    cout << "\n1. Add room"
+         << "\n2. Reserve room"
+         << "\n3. Modify room"
+         << "\n4. View room"
+         << "\n5. Exit" << endl;
+}
+
+
+/*+++++++++++++++++++++++++++++++++++++++
+Function Name : addroom()
+Purpose : adds a room to the Hotel Class
++++++++++++++++++++++++++++++++++++++++*/
+
+void addroom(vector <Hotel>& suite) {
+
+    int num, cap;
+    double rate;
+    cout << "\n\n\t\t\tADD ROOM\t\t\t\n\n";
+    cout << "Enter the room number: ";
+    cin >> num;
+    cout << "Enter the maximum number of persons the room can accommodate: ";
+    cin >> cap;
+    cout << "Enter the daily rate of the room: $";
+    cin >> rate;
+
+    Hotel Room(num, cap, rate);
+    suite.push_back(Room);
+
+}
+
+
+/*++++++++++++++++++++++++++++++++++++++
+Function Name : reserveroom()
+Purpose : Changing the occupancy status
+for guest checking into a room
++++++++++++++++++++++++++++++++++++++++*/
+
+void reserveroom(vector<Hotel>& suite) {
+
+    if (suite.size() <= 3){
+        return;
+    }
+    bool found = false;
+    int num, guest;
+    cout << "\n\n\t\t\tRESERVE ROOM\t\t\t\n\n";
+    cout << "Enter the Room Number you want to Reserve: ";
+    cin >> num;
+    for (unsigned int i = 0; i < suite.size(); i++) {
+        if (num == suite[i].getNumber()) {
+            cout << "Enter the number of guests to occupy the room: ";
+            cin >> guest;
+            suite[i].ChangeStatus(guest);
+            found = true;
+
+            cout << "________________________________________"
+                 << "\nRoom #" << suite[i].getNumber()
+                 << "\nCapacity: " << suite[i].getCapacity()
+                 << "\nDaily Rate: $" << suite[i].getRate()
+                 << "\nRoom Status: " << suite[i].getStatus()
+                 << " guest(s)"
+                 << endl;
+            break;
+        }
+    }
+    if (found == false) {
+        cout << "Room Number does not exists. " << endl;
+    }
+}
+
+
+/*+++++++++++++++++++++++++++++++++++++++++++++
+Function Name : modifyroom()
+Purpose : Edits the status and Rate of rooms
+++++++++++++++++++++++++++++++++++++++++++++++*/
+
+void modifyroom(vector<Hotel>& suite) {
+
+    if (!suite.size() > 0){
+        return;
+    }
+    int num, guests;
+    double cost;
+    bool found = false;
+    cout << "\n\n\t\t\tMODIFY ROOM\t\t\t\n\n";
+    cout << "Enter room number to modify room: ";
+    cin >> num;
+    for (unsigned int i = 0; i < suite.size(); i++) {
+        if (num == suite[i].getNumber()) {
+            cout << "\nRoom #" << suite[i].getNumber()
+                 << "\nCapacity: " << suite[i].getCapacity()
+                 << "\nDaily Rate: $" << suite[i].getRate()
+                 << "\nRoom Status: " << suite[i].getStatus()
+                 << endl;
+            found = true;
+        }
+        if (found) {
+            cout << "\nEnter the number of guests in this room: ";
+            cin >> guests;
+            cout << "Enter the adjusted daily rate: $";
+            cin >> cost;
+
+            suite[i].ChangeStatus(guests);
+            suite[i].ChangeRate(cost);
+            break;
+
+        }
+    }
+    if (found == false) {
+        cout << "Room Number does not exists" << endl;
+    }
+
+}
+
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++
+Function Name : viewroom()
+Purpose : Displays all rooms added to the Hotel class
++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+
+void viewroom(vector<Hotel>& suite) {
+
+    if (!suite.size() > 0){
+        return;
+    }
+    unsigned int size = suite.size();
+
+    cout << "\n\n\t\t\tVIEW ROOMS\t\t\t\n\n";
+
+    for (unsigned int loop = 0; loop < size; loop++) {
+
+        cout << "\nRoom Number: " << suite[loop].getNumber()
+             << "\nRoom Status: " << suite[loop].getStatus() << " guest(s)"
+             << "\nDaily Rate: $" << suite[loop].getRate() << " per guest"
+             << "\n________________________________________\n" <<endl;
+    }
+
+
+}
+
+//========================================================================    MAIN    ============================================================================
+
+int main()
+{
+    vector <Hotel> rooms;
+    char option;
+
+    do {
+
+        menu();
+        cout << "\nSelect an option: ";
+        cin >> option;
+        cout << "\033[2J\033[1;1H"; //ANSI Escape Code Screen Clear Sequence
+
+        switch (option)
+        {
+        case '1':
+            addroom(rooms);
+            break;
+        case '2':
+            reserveroom(rooms);
+            break;
+        case '3':
+            modifyroom(rooms);
+            break;
+        case '4':
+            viewroom(rooms);
+            break;
+        case '5':
+            cout << "Program Exited Successfully!";
+            break;
+        default:
+            cout << "\nNot a valid option.\n";
+        }
+
+
+    } while(option != '5');
+
+    return 0;
+}
